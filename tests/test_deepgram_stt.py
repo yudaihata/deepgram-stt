@@ -34,6 +34,7 @@ def mock_config_entry():
             CONF_MODEL: DEFAULT_MODEL,
             CONF_LANGUAGE: DEFAULT_LANGUAGE,
         },
+        options={},
         unique_id="deepgram_stt",
     )
 
@@ -71,9 +72,7 @@ class TestDeepgramSTTEntity:
         entity = DeepgramSTTEntity(mock_config_entry)
         languages = entity.supported_languages
 
-        assert "pl" in languages
-        assert "en" in languages
-        assert len(languages) >= 8
+        assert languages == [DEFAULT_LANGUAGE]
 
     def test_supported_formats(self, mock_config_entry):
         """Test supported audio formats."""
@@ -272,7 +271,7 @@ class TestDeepgramSTTIntegrationSetup:
     @pytest.mark.asyncio
     async def test_platform_setup_entry(self, mock_hass, mock_config_entry):
         """Test STT platform setup from config entry."""
-        mock_add_entities = AsyncMock()
+        mock_add_entities = MagicMock()
 
         await async_setup_platform_entry(mock_hass, mock_config_entry, mock_add_entities)
 

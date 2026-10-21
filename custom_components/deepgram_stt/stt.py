@@ -8,7 +8,6 @@ import logging
 
 from deepgram import AsyncDeepgramClient
 from deepgram.core.events import EventType
-from deepgram.extensions.types.sockets import ListenV1ControlMessage
 
 from homeassistant.components.stt import (
     AudioBitRates,
@@ -33,6 +32,7 @@ from .const import (
     DEFAULT_LANGUAGE,
     DEFAULT_MODEL,
     DEFAULT_SAMPLE_RATE,
+    MULTILINGUAL_LANGUAGES,
     STREAM_DELAY,
     TRANSCRIPT_TIMEOUT,
 )
@@ -58,7 +58,7 @@ class DeepgramSTTEntity(SpeechToTextEntity):
         self._attr_unique_id = "deepgram_stt"
         self._api_key = config_entry.data.get(CONF_API_KEY)
         self._model = config_entry.data.get(CONF_MODEL, DEFAULT_MODEL)
-        self._language = config_entry.data.get(CONF_LANGUAGE, DEFAULT_LANGUAGE)
+        self._language = config_entry.options.get(CONF_LANGUAGE, config_entry.data.get(CONF_LANGUAGE, DEFAULT_LANGUAGE))
         self.config_entry = config_entry
         self._attr_device_info = None  # No physical device for cloud API
 
@@ -79,8 +79,10 @@ class DeepgramSTTEntity(SpeechToTextEntity):
 
     @property
     def supported_languages(self) -> list[str]:
-        """Return supported languages."""
-        return ["pl", "en", "de", "es", "fr", "it", "nl", "pt"]
+        """Advertise languages the configured recognition mode can transcribe."""
+        if self._language == "multi":
+            return list(MULTILINGUAL_LANGUAGES)
+        return [self._language]
 
     @property
     def supported_formats(self) -> list[AudioFormats]:
@@ -189,7 +191,7 @@ class DeepgramSTTEntity(SpeechToTextEntity):
                     _LOGGER.debug("Audio streaming complete: %d chunks, %d bytes total", chunk_count, total_bytes)
 
                     # Send close stream signal to finalize transcription
-                    await dg_connection.send_control(ListenV1ControlMessage(type="CloseStream"))
+                    await dg_connection.send_close_stream()
                     _LOGGER.debug("Sent CloseStream signal to Deepgram")
 
                     # Wait for final transcript (with timeout)
