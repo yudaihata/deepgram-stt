@@ -1,0 +1,34 @@
+{
+  "title": "Deepgram STT",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configure Deepgram STT",
+        "description": "Enter your Deepgram API credentials and select a Nova-3 transcription language.",
+        "data": {
+          "api_key": "API Key",
+          "model": "Model",
+          "language": "Language"
+        }
+      }
+    },
+    "error": {
+      "invalid_api_key": "Invalid API key (must be at least 10 characters)",
+      "unknown": "Unexpected error occurred"
+    },
+    "abort": {
+      "already_configured": "Deepgram STT is already configured"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configure Deepgram STT",
+        "description": "Select the transcription language. The integration reloads after saving. Match this language in your voice assistant settings.",
+        "data": {
+          "language": "Language"
+        }
+      }
+    }
+  }
+}

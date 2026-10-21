@@ -51,6 +51,9 @@ markers = [
 filterwarnings = [
     # Treat warnings as errors to catch issues early
     "error",
+    # Deepgram 7.14 imports this deprecated websockets compatibility alias.
+    "ignore:websockets.exceptions.InvalidStatusCode is deprecated:DeprecationWarning:deepgram.core.websocket_compat",
+    "ignore:websockets.legacy is deprecated:DeprecationWarning:websockets.legacy",
     # Ignore specific warnings from third-party libraries as needed
     # "ignore:.*custom_components.* is using deprecated.*:DeprecationWarning",
 ]
