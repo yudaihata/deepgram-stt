@@ -52,4 +52,4 @@ jobs:
           uv pip install -r requirements.txt -r requirements_test.txt
 
       - name: Run tests
-        run: uv run --no-project pytest
+        run: .venv/bin/pytest
